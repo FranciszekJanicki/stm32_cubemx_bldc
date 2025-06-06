@@ -42,96 +42,96 @@
 #define HALL_2_PIN BLDC_HALL_1_Pin
 #define HALL_3_PIN BLDC_HALL_2_Pin
 
-static inline void pwm_set_u(uint16_t value)
+static inline void pwm_set_U(uint16_t value)
 {
     __HAL_TIM_SET_COMPARE(PWM_U_TIM, PWM_U_CHANNEL, value & 0xFFFFU);
 }
 
-static inline void pwm_set_v(uint16_t value)
+static inline void pwm_set_V(uint16_t value)
 {
     __HAL_TIM_SET_COMPARE(PWM_V_TIM, PWM_V_CHANNEL, value & 0xFFFFU);
 }
 
-static inline void pwm_set_w(uint16_t value)
+static inline void pwm_set_W(uint16_t value)
 {
     __HAL_TIM_SET_COMPARE(PWM_W_TIM, PWM_W_CHANNEL, value & 0xFFFFU);
 }
 
-static inline void pwm_set_all(uint16_t value)
+static inline void pwm_set_All(uint16_t value)
 {
-    pwm_set_u(value);
-    pwm_set_v(value);
-    pwm_set_w(value);
+    pwm_set_U(value);
+    pwm_set_V(value);
+    pwm_set_W(value);
 }
 
-static inline void pwm_reset_UH()
+static inline void pin_reset_UH()
 {
     UH_GPIO->ODR &= ~UH_PIN;
 }
 
-static inline void pwm_set_UH()
+static inline void pin_set_UH()
 {
     UH_GPIO->ODR |= UH_PIN;
 }
 
-static inline void pwm_reset_UL()
+static inline void pin_reset_UL()
 {
     UL_GPIO->ODR &= ~UL_PIN;
 }
 
-static inline void pwm_set_UL()
+static inline void pin_set_UL()
 {
     UL_GPIO->ODR |= UL_PIN;
 }
 
-static inline void pwm_reset_VH()
+static inline void pin_reset_VH()
 {
     VH_GPIO->ODR &= ~VH_PIN;
 }
 
-static inline void pwm_set_VH()
+static inline void pin_set_VH()
 {
     VH_GPIO->ODR |= VH_PIN;
 }
 
-static inline void pwm_reset_VL()
+static inline void pin_reset_VL()
 {
     VL_GPIO->ODR &= ~VL_PIN;
 }
 
-static inline void pwm_set_VL()
+static inline void pin_set_VL()
 {
     VL_GPIO->ODR |= VL_PIN;
 }
 
-static inline void pwm_reset_WH()
+static inline void pin_reset_WH()
 {
     WH_GPIO->ODR &= ~WH_PIN;
 }
 
-static inline void pwm_set_WH()
+static inline void pin_set_WH()
 {
     WH_GPIO->ODR |= WH_PIN;
 }
 
-static inline void pwm_reset_WL()
+static inline void pin_reset_WL()
 {
     WL_GPIO->ODR &= ~WL_PIN;
 }
 
-static inline void pwm_set_WL()
+static inline void pin_set_WL()
 {
     WL_GPIO->ODR |= WL_PIN;
 }
 
-static inline void pwm_reset_all()
+static inline void pin_reset_all()
 {
-    pwm_reset_UH();
-    pwm_reset_UL();
-    pwm_reset_VH();
-    pwm_reset_VL();
-    pwm_reset_WH();
-    pwm_reset_WL();
+    pin_reset_UH();
+    pin_reset_UL();
+    pin_reset_VH();
+    pin_reset_VL();
+    pin_reset_WH();
+    pin_reset_WL();
 }
 
 static bool hall_get_1(void)
@@ -165,11 +165,11 @@ typedef enum {
 
 #define BIPOLAR
 
-static inline void bldc_commutation_forward_0(void)
+static inline void bldc_commutation_forward_0(uint16_t value)
 {
 #ifdef BIPOLAR
-    pwm_set_UH();
-    pwm_set_VL();
+    pwm_set_U(value);
+    pwm_();
 #else
     pwm_set_UH();
 #endif
@@ -372,6 +372,7 @@ int main()
     MX_TIM8_Init();
 
     HAL_TIM_PWM_Start_IT(&htim8, TIM_CHANNEL_1 | TIM_CHANNEL_2 | TIM_CHANNEL_3);
+    HAL_TIMEx_PWMN_Start_IT(&htim8, TIM_CHANNEL_1 | TIM_CHANNEL_2 | TIM_CHANNEL_3);
     HAL_TIMEx_HallSensor_Start_IT(&htim4);
 
     while (1) {
