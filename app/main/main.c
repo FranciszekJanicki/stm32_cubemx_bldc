@@ -8,145 +8,227 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#define UH_GPIO BLDC_UH_GPIO_Port
-#define UL_GPIO BLDC_UH_GPIO_Port
-#define VH_GPIO BLDC_VH_GPIO_Port
-#define VL_GPIO BLDC_VL_GPIO_Port
-#define WH_GPIO BLDC_WH_GPIO_Port
-#define WL_GPIO BLDC_WL_GPIO_Port
+#define BLDC_BIPOLAR_CONTROL
 
-#define UH_PIN BLDC_UH_Pin
-#define UL_PIN BLDC_UL_Pin
-#define VH_PIN BLDC_VH_Pin
-#define VL_PIN BLDC_VL_Pin
-#define WH_PIN BLDC_WH_Pin
-#define WL_PIN BLDC_WL_Pin
+#define PWM_UH_PORT BLDC_UH_GPIO_Port
+#define PWM_UL_PORT BLDC_UL_GPIO_Port
+#define PWM_VH_PORT BLDC_VH_GPIO_Port
+#define PWM_VL_PORT BLDC_VL_GPIO_Port
+#define PWM_WH_PORT BLDC_WH_GPIO_Port
+#define PWM_WL_PORT BLDC_WL_GPIO_Port
 
-#define PWM_TIM TIM8
+#define PWM_UH_PIN BLDC_UH_Pin
+#define PWM_UL_PIN BLDC_UL_Pin
+#define PWM_VH_PIN BLDC_VH_Pin
+#define PWM_VL_PIN BLDC_VL_Pin
+#define PWM_WH_PIN BLDC_WH_Pin
+#define PWM_WL_PIN BLDC_WL_Pin
 
 #define PWM_U_CHANNEL TIM_CHANNEL_1
 #define PWM_W_CHANNEL TIM_CHANNEL_2
 #define PWM_V_CHANNEL TIM_CHANNEL_3
 
-#define HALL_TIM TIM4
-
 #define PWM_U_TIM (&htim8)
 #define PWM_V_TIM (&htim8)
 #define PWM_W_TIM (&htim8)
 
-#define HALL_1_GPIO BLDC_HALL_0_GPIO_Port
-#define HALL_2_GPIO BLDC_HALL_1_GPIO_Port
-#define HALL_3_GPIO BLDC_HALL_2_GPIO_Port
+#define HALL_TIM (&htim4)
+
+#define HALL_1_PORT BLDC_HALL_0_GPIO_Port
+#define HALL_2_PORT BLDC_HALL_1_GPIO_Port
+#define HALL_3_PORT BLDC_HALL_2_GPIO_Port
 
 #define HALL_1_PIN BLDC_HALL_0_Pin
 #define HALL_2_PIN BLDC_HALL_1_Pin
 #define HALL_3_PIN BLDC_HALL_2_Pin
 
-static inline void pwm_set_U(uint16_t value)
+GPIO_InitTypeDef gpio_init = {};
+
+static inline void gpio_write_uh(bool state)
 {
-    __HAL_TIM_SET_COMPARE(PWM_U_TIM, PWM_U_CHANNEL, value & 0xFFFFU);
+    gpio_init.Pin = PWM_UH_PIN;
+    gpio_init.Mode = MODE_OUTPUT | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_UH_PORT, &gpio_init);
+    HAL_GPIO_WritePin(PWM_UH_PORT, PWM_UH_PIN, state);
 }
 
-static inline void pwm_set_V(uint16_t value)
+static inline void gpio_write_ul(bool state)
 {
-    __HAL_TIM_SET_COMPARE(PWM_V_TIM, PWM_V_CHANNEL, value & 0xFFFFU);
+    gpio_init.Pin = PWM_UL_PIN;
+    gpio_init.Mode = MODE_OUTPUT | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_UL_PORT, &gpio_init);
+    HAL_GPIO_WritePin(PWM_UL_PORT, PWM_UL_PIN, state);
 }
 
-static inline void pwm_set_W(uint16_t value)
+static inline void gpio_write_vh(bool state)
 {
-    __HAL_TIM_SET_COMPARE(PWM_W_TIM, PWM_W_CHANNEL, value & 0xFFFFU);
+    gpio_init.Pin = PWM_VH_PIN;
+    gpio_init.Mode = MODE_OUTPUT | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_VH_PORT, &gpio_init);
+    HAL_GPIO_WritePin(PWM_VH_PORT, PWM_VH_PIN, state);
 }
 
-static inline void pwm_set_All(uint16_t value)
+static inline void gpio_write_vl(bool state)
 {
-    pwm_set_U(value);
-    pwm_set_V(value);
-    pwm_set_W(value);
+    gpio_init.Pin = PWM_VL_PIN;
+    gpio_init.Mode = MODE_OUTPUT | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_VL_PORT, &gpio_init);
+    HAL_GPIO_WritePin(PWM_VL_PORT, PWM_VL_PIN, state);
 }
 
-static inline void pin_reset_UH()
+static inline void gpio_write_wh(bool state)
 {
-    UH_GPIO->ODR &= ~UH_PIN;
+    gpio_init.Pin = PWM_WH_PIN;
+    gpio_init.Mode = MODE_OUTPUT | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_WH_PORT, &gpio_init);
+    HAL_GPIO_WritePin(PWM_WH_PORT, PWM_WH_PIN, state);
 }
 
-static inline void pin_set_UH()
+static inline void gpio_write_wl(bool state)
 {
-    UH_GPIO->ODR |= UH_PIN;
+    gpio_init.Pin = PWM_WL_PIN;
+    gpio_init.Mode = MODE_OUTPUT | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_WL_PORT, &gpio_init);
+    HAL_GPIO_WritePin(PWM_WL_PORT, PWM_WL_PIN, state);
 }
 
-static inline void pin_reset_UL()
+static inline void tim_set_compare_uh(uint16_t compare)
 {
-    UL_GPIO->ODR &= ~UL_PIN;
+    gpio_init.Pin = PWM_UH_PIN;
+    gpio_init.Mode = MODE_AF | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_UH_PORT, &gpio_init);
+    __HAL_TIM_SET_COMPARE(PWM_U_TIM, PWM_U_CHANNEL, compare);
 }
 
-static inline void pin_set_UL()
+static inline void tim_set_compare_ul(uint16_t compare)
 {
-    UL_GPIO->ODR |= UL_PIN;
+    gpio_init.Pin = PWM_UL_PIN;
+    gpio_init.Mode = MODE_AF | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_UL_PORT, &gpio_init);
+    __HAL_TIM_SET_COMPARE(PWM_U_TIM, PWM_U_CHANNEL, compare);
 }
 
-static inline void pin_reset_VH()
+static inline void tim_set_compare_vh(uint16_t compare)
 {
-    VH_GPIO->ODR &= ~VH_PIN;
+    gpio_init.Pin = PWM_VH_PIN;
+    gpio_init.Mode = MODE_AF | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_VH_PORT, &gpio_init);
+    __HAL_TIM_SET_COMPARE(PWM_V_TIM, PWM_V_CHANNEL, compare);
 }
 
-static inline void pin_set_VH()
+static inline void tim_set_compare_vl(uint16_t compare)
 {
-    VH_GPIO->ODR |= VH_PIN;
+    gpio_init.Pin = PWM_VL_PIN;
+    gpio_init.Mode = MODE_AF | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_VL_PORT, &gpio_init);
+    __HAL_TIM_SET_COMPARE(PWM_V_TIM, PWM_V_CHANNEL, compare);
 }
 
-static inline void pin_reset_VL()
+static inline void tim_set_compare_wh(uint16_t compare)
 {
-    VL_GPIO->ODR &= ~VL_PIN;
+    gpio_init.Pin = PWM_WH_PIN;
+    gpio_init.Mode = MODE_AF | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_WH_PORT, &gpio_init);
+    __HAL_TIM_SET_COMPARE(PWM_W_TIM, PWM_W_CHANNEL, compare);
 }
 
-static inline void pin_set_VL()
+static inline void tim_set_compare_wl(uint16_t compare)
 {
-    VL_GPIO->ODR |= VL_PIN;
+    gpio_init.Pin = PWM_WL_PIN;
+    gpio_init.Mode = MODE_AF | OUTPUT_PP;
+    HAL_GPIO_Init(PWM_WL_PORT, &gpio_init);
+    __HAL_TIM_SET_COMPARE(PWM_W_TIM, PWM_W_CHANNEL, compare);
 }
 
-static inline void pin_reset_WH()
+static inline void pwm_conf_UH(uint16_t compare)
 {
-    WH_GPIO->ODR &= ~WH_PIN;
+    tim_set_compare_uh(compare);
+    gpio_write_ul(false);
 }
 
-static inline void pin_set_WH()
+static inline void pwm_conf_UL(uint16_t compare)
 {
-    WH_GPIO->ODR |= WH_PIN;
+    tim_set_compare_ul(compare);
+    gpio_write_uh(false);
 }
 
-static inline void pin_reset_WL()
+static inline void pwm_conf_VH(uint16_t compare)
 {
-    WL_GPIO->ODR &= ~WL_PIN;
+    tim_set_compare_vh(compare);
+    gpio_write_vh(false);
 }
 
-static inline void pin_set_WL()
+static inline void pwm_conf_VL(uint16_t compare)
 {
-    WL_GPIO->ODR |= WL_PIN;
+    tim_set_compare_ul(compare);
+    gpio_write_ul(false);
 }
 
-static inline void pin_reset_all()
+static inline void pwm_conf_WH(uint16_t compare)
 {
-    pin_reset_UH();
-    pin_reset_UL();
-    pin_reset_VH();
-    pin_reset_VL();
-    pin_reset_WH();
-    pin_reset_WL();
+    tim_set_compare_wh(compare);
+    gpio_write_wh(false);
 }
 
-static bool hall_get_1(void)
+static inline void pwm_conf_WL(uint16_t compare)
 {
-    return (HALL_1_GPIO->IDR & HALL_1_PIN) ? 1 : 0;
+    tim_set_compare_wl(compare);
+    gpio_write_wl(false);
 }
 
-static bool hall_get_2(void)
+static inline void pwm_set_UH(bool state)
 {
-    return (HALL_2_GPIO->IDR & HALL_2_PIN) ? 1 : 0;
+    gpio_write_uh(state);
 }
 
-static bool hall_get_3(void)
+static inline void pwm_set_UL(bool state)
 {
-    return (HALL_3_GPIO->IDR & HALL_3_PIN) ? 1 : 0;
+    gpio_write_ul(state);
+}
+
+static inline void pwm_set_VH(bool state)
+{
+    gpio_write_vh(state);
+}
+
+static inline void pwm_set_VL(bool state)
+{
+    gpio_write_vl(state);
+}
+
+static inline void pwm_set_WH(bool state)
+{
+    gpio_write_wh(state);
+}
+
+static inline void pwm_set_WL(bool state)
+{
+    gpio_write_wl(state);
+}
+
+static inline void pwm_set_all(bool state)
+{
+    pwm_set_UH(state);
+    pwm_set_UL(state);
+    pwm_set_VH(state);
+    pwm_set_VL(state);
+    pwm_set_WH(state);
+    pwm_set_WL(state);
+}
+
+static inline bool gpio_read_h1(void)
+{
+    return HAL_GPIO_ReadPin(HALL_1_PORT, HALL_1_PIN);
+}
+
+static inline bool gpio_read_h2(void)
+{
+    return HAL_GPIO_ReadPin(HALL_2_PORT, HALL_2_PIN);
+}
+
+static inline bool gpio_read_h3(void)
+{
+    return HAL_GPIO_ReadPin(HALL_3_PORT, HALL_3_PIN);
 }
 
 typedef enum {
@@ -163,203 +245,221 @@ typedef enum {
     BLDC_POSITION_300 = 0b100,
 } bldc_position_t;
 
-#define BIPOLAR
+#ifdef BLDC_BIPOLAR_CONTROL
 
-static inline void bldc_commutation_forward_0(uint16_t value)
+static inline void bldc_commutation_forward_0(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_U(value);
-    pwm_();
-#else
-    pwm_set_UH();
-#endif
+    pwm_conf_WH(compare);
+    pwm_conf_VL(compare);
 }
 
-static inline void bldc_commutation_forward_60(void)
+static inline void bldc_commutation_forward_60(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_UH();
-    pwm_set_WL();
-#else
-    pwm_set_UH();
-#endif
+    pwm_conf_UH(compare);
+    pwm_conf_VL(compare);
 }
 
-static inline void bldc_commutation_forward_120(void)
+static inline void bldc_commutation_forward_120(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_VH();
-    pwm_set_WL();
-#else
-    pwm_set_VH();
-#endif
+    pwm_conf_UH(compare);
+    pwm_conf_WL(compare);
 }
 
-static inline void bldc_commutation_forward_180(void)
+static inline void bldc_commutation_forward_180(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_VH();
-    pwm_set_UL();
-#else
-    pwm_set_VH();
-#endif
+    pwm_conf_VH(compare);
+    pwm_conf_WL(compare);
 }
 
-static inline void bldc_commutation_forward_240(void)
+static inline void bldc_commutation_forward_240(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_WH();
-    pwm_set_UL();
-#else
-    pwm_set_WH();
-#endif
+    pwm_conf_VH(compare);
+    pwm_conf_UL(compare);
 }
 
-static inline void bldc_commutation_forward_300(void)
+static inline void bldc_commutation_forward_300(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_WH();
-    pwm_set_VL();
-#else
-    pwm_set_WH();
-#endif
+    pwm_conf_WH(compare);
+    pwm_conf_UL(compare);
 }
 
-static inline void bldc_commutation_backward_0(void)
+static inline void bldc_commutation_backward_0(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_VH();
-    pwm_set_UL();
-#else
-    pwm_set_VH();
-#endif
+    pwm_conf_VH(compare);
+    pwm_conf_WL(compare);
 }
 
-static inline void bldc_commutation_backward_60(void)
+static inline void bldc_commutation_backward_60(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_WH();
-    pwm_set_UL();
-#else
-    pwm_set_WH();
-#endif
+    pwm_conf_VH(compare);
+    pwm_conf_UL(compare);
 }
 
-static inline void bldc_commutation_backward_120(void)
+static inline void bldc_commutation_backward_120(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_WH();
-    pwm_set_VL();
-#else
-    pwm_set_WH();
-#endif
+    pwm_conf_WH(compare);
+    pwm_conf_UL(compare);
 }
 
-static inline void bldc_commutation_backward_180(void)
+static inline void bldc_commutation_backward_180(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_UH();
-    pwm_set_VL();
-#else
-    pwm_set_UH();
-#endif
+    pwm_conf_WH(compare);
+    pwm_conf_VL(compare);
 }
 
-static inline void bldc_commutation_backward_240(void)
+static inline void bldc_commutation_backward_240(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_UH();
-    pwm_set_WL();
-#else
-    pwm_set_UH();
-#endif
+    pwm_conf_UH(compare);
+    pwm_conf_VL(compare);
 }
 
-static inline void bldc_commutation_backward_300(void)
+static inline void bldc_commutation_backward_300(uint16_t compare)
 {
-#ifdef BIPOLAR
-    pwm_set_VH();
-    pwm_set_WL();
-#else
-    pwm_set_VH();
-#endif
+    pwm_conf_UH(compare);
+    pwm_conf_WL(compare);
 }
 
-typedef void (*bldc_commutation_t)(void);
+#else
 
-static void bldc_commutation_forward(bldc_position_t position)
+static inline void bldc_commutation_forward_0(uint16_t compare)
 {
-    static bldc_commutation_t commutations[] = {[BLDC_POSITION_0] = &bldc_commutation_forward_0,
-                                                [BLDC_POSITION_60] = &bldc_commutation_forward_60,
-                                                [BLDC_POSITION_120] = &bldc_commutation_forward_120,
-                                                [BLDC_POSITION_180] = &bldc_commutation_forward_180,
-                                                [BLDC_POSITION_240] = &bldc_commutation_forward_240,
-                                                [BLDC_POSITION_300] = &bldc_commutation_forward_300};
+    pwm_conf_WH(compare);
+    pwm_set_VL(true);
+}
 
-    if ((position < 0b111) && (position > 0b000)) {
-        (*commutations[position])();
+static inline void bldc_commutation_forward_60(uint16_t compare)
+{
+    pwm_conf_UH(compare);
+    pwm_set_VL(true);
+}
+
+static inline void bldc_commutation_forward_120(uint16_t compare)
+{
+    pwm_conf_UH(compare);
+    pwm_set_WL(true);
+}
+
+static inline void bldc_commutation_forward_180(uint16_t compare)
+{
+    pwm_conf_VH(compare);
+    pwm_set_WL(true);
+}
+
+static inline void bldc_commutation_forward_240(uint16_t compare)
+{
+    pwm_conf_VH(compare);
+    pwm_set_UL(true);
+}
+
+static inline void bldc_commutation_forward_300(uint16_t compare)
+{
+    pwm_conf_WH(compare);
+    pwm_set_UL(true);
+}
+
+static inline void bldc_commutation_backward_0(uint16_t compare)
+{
+    pwm_conf_VH(compare);
+    pwm_set_WL(true);
+}
+
+static inline void bldc_commutation_backward_60(uint16_t compare)
+{
+    pwm_conf_VH(compare);
+    pwm_set_UL(true);
+}
+
+static inline void bldc_commutation_backward_120(uint16_t compare)
+{
+    pwm_conf_WH(compare);
+    pwm_set_UL(true);
+}
+
+static inline void bldc_commutation_backward_180(uint16_t compare)
+{
+    pwm_conf_WH(compare);
+    pwm_set_VL(true);
+}
+
+static inline void bldc_commutation_backward_240(uint16_t compare)
+{
+    pwm_conf_UH(compare);
+    pwm_set_VL(true);
+}
+
+static inline void bldc_commutation_backward_300(uint16_t compare)
+{
+    pwm_conf_UH(compare);
+    pwm_set_WL(true);
+}
+
+#endif
+
+typedef void (*bldc_commutation_t)(uint16_t);
+
+static void bldc_commutation_forward(bldc_position_t position, uint16_t compare)
+{
+    static bldc_commutation_t forward_commutations[] = {[BLDC_POSITION_0] = &bldc_commutation_forward_0,
+                                                        [BLDC_POSITION_60] = &bldc_commutation_forward_60,
+                                                        [BLDC_POSITION_120] = &bldc_commutation_forward_120,
+                                                        [BLDC_POSITION_180] = &bldc_commutation_forward_180,
+                                                        [BLDC_POSITION_240] = &bldc_commutation_forward_240,
+                                                        [BLDC_POSITION_300] = &bldc_commutation_forward_300};
+
+    if (position != 0b000 && position != 0b111) {
+        forward_commutations[position](compare);
     }
 }
 
-static void bldc_commutation_backward(bldc_position_t position)
+static void bldc_commutation_backward(bldc_position_t position, uint16_t compare)
 {
-    static bldc_commutation_t commutations[] = {[BLDC_POSITION_0] = &bldc_commutation_backward_0,
-                                                [BLDC_POSITION_60] = &bldc_commutation_backward_60,
-                                                [BLDC_POSITION_120] = &bldc_commutation_backward_120,
-                                                [BLDC_POSITION_180] = &bldc_commutation_backward_180,
-                                                [BLDC_POSITION_240] = &bldc_commutation_backward_240,
-                                                [BLDC_POSITION_300] = &bldc_commutation_backward_300};
+    static bldc_commutation_t backward_commutations[] = {[BLDC_POSITION_0] = &bldc_commutation_backward_0,
+                                                         [BLDC_POSITION_60] = &bldc_commutation_backward_60,
+                                                         [BLDC_POSITION_120] = &bldc_commutation_backward_120,
+                                                         [BLDC_POSITION_180] = &bldc_commutation_backward_180,
+                                                         [BLDC_POSITION_240] = &bldc_commutation_backward_240,
+                                                         [BLDC_POSITION_300] = &bldc_commutation_backward_300};
 
-    if ((position < 0b111) && (position > 0b000)) {
-        (*commutations[position])();
+    if (position != 0b000 && position != 0b111) {
+        backward_commutations[position](compare);
     }
 }
 
-static void bldc_commutation(bldc_direction_t direction)
+static void bldc_commutation(bldc_direction_t direction, uint16_t compare)
 {
-    static uint8_t prev_hall = 0xFFU;
+    static uint8_t prev_position = 0xFFU;
 
     // faza U -> hall 3
-    uint8_t hall_u = hall_get_3();
+    uint8_t hall_u = gpio_read_h3();
     // faza V -> hall 1
-    uint8_t hall_v = hall_get_1();
+    uint8_t hall_v = gpio_read_h1();
     // faza W -> hall 2
-    uint8_t hall_w = hall_get_2();
+    uint8_t hall_w = gpio_read_h2();
 
-    // bitwise or aby zebrac do 3 bitowej unsigned wartosci
-    uint8_t hall = (hall_u << 2U) | (hall_v << 1U) | hall_w;
+    // bitwise OR aby zebrac do 3 bitowej unsigned wartosci
+    uint8_t position = (hall_u << 2U) | (hall_v << 1U) | hall_w;
 
-    if (hall != prev_hall) {
-        pwm_reset_all();
+    if (position != prev_position) {
+        pwm_set_all(false);
 
         switch (direction) {
             case BLDC_DIRECTION_FORWARD:
-                bldc_commutation_forward(hall);
+                bldc_commutation_forward(position, compare);
                 break;
             case BLDC_DIRECTION_BACKWARD:
-                bldc_commutation_backward(hall);
+                bldc_commutation_backward(position, compare);
                 break;
             default:
                 break;
         }
     }
 
-    prev_hall = hall;
+    prev_position = position;
 }
 
 void HAL_TIMEx_HallSensor_Callback(TIM_HandleTypeDef* htim)
 {
-    if (htim->Instance == HALL_TIM) {
-        bldc_commutation(BLDC_DIRECTION_FORWARD);
-        HAL_TIMEx_HallSensor_Start_IT(htim);
-    }
-}
-
-void HAL_TIM_PWM_PulseFinishedCallback(TIM_HandleTypeDef* htim)
-{
-    if (htim->Instance == PWM_TIM) {
-        HAL_TIM_PWM_Start_IT(htim, PWM_U_CHANNEL | PWM_V_CHANNEL | PWM_W_CHANNEL);
-    }
+    bldc_commutation(BLDC_DIRECTION_FORWARD, 0x8000U);
 }
 
 int main()
@@ -371,9 +471,15 @@ int main()
     MX_TIM4_Init();
     MX_TIM8_Init();
 
-    HAL_TIM_PWM_Start_IT(&htim8, TIM_CHANNEL_1 | TIM_CHANNEL_2 | TIM_CHANNEL_3);
-    HAL_TIMEx_PWMN_Start_IT(&htim8, TIM_CHANNEL_1 | TIM_CHANNEL_2 | TIM_CHANNEL_3);
-    HAL_TIMEx_HallSensor_Start_IT(&htim4);
+    HAL_TIM_PWM_Start_IT(PWM_U_TIM, PWM_U_CHANNEL);
+    HAL_TIM_PWM_Start_IT(PWM_V_TIM, PWM_V_CHANNEL);
+    HAL_TIM_PWM_Start_IT(PWM_W_TIM, PWM_W_CHANNEL);
+
+    HAL_TIMEx_PWMN_Start_IT(PWM_U_TIM, PWM_U_CHANNEL);
+    HAL_TIMEx_PWMN_Start_IT(PWM_V_TIM, PWM_V_CHANNEL);
+    HAL_TIMEx_PWMN_Start_IT(PWM_W_TIM, PWM_W_CHANNEL);
+
+    HAL_TIMEx_HallSensor_Start_IT(HALL_TIM);
 
     while (1) {
     }
