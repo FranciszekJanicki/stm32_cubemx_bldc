@@ -221,62 +221,62 @@ typedef enum {
 } bldc_direction_t;
 
 typedef enum {
-    BLDC_POSITION_0 = 0b110,
-    BLDC_POSITION_60 = 0b010,
-    BLDC_POSITION_120 = 0b011,
-    BLDC_POSITION_180 = 0b001,
-    BLDC_POSITION_240 = 0b101,
-    BLDC_POSITION_300 = 0b100,
+    BLDC_POSITION_0 = 0b101,
+    BLDC_POSITION_60 = 0b100,
+    BLDC_POSITION_120 = 0b110,
+    BLDC_POSITION_180 = 0b010,
+    BLDC_POSITION_240 = 0b011,
+    BLDC_POSITION_300 = 0b001,
 } bldc_position_t;
 
 #ifdef BLDC_BIPOLAR_CONTROL
 
 static inline void bldc_commutation_forward_0(uint16_t compare)
 {
-    pwm_confWH(compare);
-    pwm_confVL(compare);
+    pwm_confVH(compare);
+    pwm_confWL(compare);
 }
 
 static inline void bldc_commutation_forward_60(uint16_t compare)
 {
-    pwm_confUH(compare);
-    pwm_confVL(compare);
-}
-
-static inline void bldc_commutation_forward_120(uint16_t compare)
-{
-    pwm_confUH(compare);
-    pwm_confWL(compare);
-}
-
-static inline void bldc_commutation_forward_180(uint16_t compare)
-{
-    pwm_confVH(compare);
-    pwm_confWL(compare);
-}
-
-static inline void bldc_commutation_forward_240(uint16_t compare)
-{
     pwm_confVH(compare);
     pwm_confUL(compare);
 }
 
-static inline void bldc_commutation_forward_300(uint16_t compare)
+static inline void bldc_commutation_forward_120(uint16_t compare)
 {
     pwm_confWH(compare);
     pwm_confUL(compare);
 }
 
+static inline void bldc_commutation_forward_180(uint16_t compare)
+{
+    pwm_confWH(compare);
+    pwm_confVL(compare);
+}
+
+static inline void bldc_commutation_forward_240(uint16_t compare)
+{
+    pwm_confUH(compare);
+    pwm_confVL(compare);
+}
+
+static inline void bldc_commutation_forward_300(uint16_t compare)
+{
+    pwm_confUH(compare);
+    pwm_confWL(compare);
+}
+
 static inline void bldc_commutation_backward_0(uint16_t compare)
 {
-    pwm_confVH(compare);
-    pwm_confWL(compare);
+    pwm_confWH(compare);
+    pwm_confVL(compare);
 }
 
 static inline void bldc_commutation_backward_60(uint16_t compare)
 {
-    pwm_confVH(compare);
-    pwm_confUL(compare);
+    pwm_confUH(compare);
+    pwm_confVL(compare);
 }
 
 static inline void bldc_commutation_backward_120(uint16_t compare)
@@ -287,8 +287,8 @@ static inline void bldc_commutation_backward_120(uint16_t compare)
 
 static inline void bldc_commutation_backward_180(uint16_t compare)
 {
-    pwm_confWH(compare);
-    pwm_confVL(compare);
+    pwm_confVH(compare);
+    pwm_confWL(compare);
 }
 
 static inline void bldc_commutation_backward_240(uint16_t compare)
@@ -299,58 +299,58 @@ static inline void bldc_commutation_backward_240(uint16_t compare)
 
 static inline void bldc_commutation_backward_300(uint16_t compare)
 {
-    pwm_confUH(compare);
-    pwm_confWL(compare);
+    pwm_confWH(compare);
+    pwm_confUL(compare);
 }
 
 #else
 
 static inline void bldc_commutation_forward_0(uint16_t compare)
 {
-    pwm_confWH(compare);
-    pwm_set_H_VL();
+    pwm_confVH(compare);
+    pwm_set_H_WL();
 }
 
 static inline void bldc_commutation_forward_60(uint16_t compare)
 {
-    pwm_confUH(compare);
-    pwm_set_H_VL();
-}
-
-static inline void bldc_commutation_forward_120(uint16_t compare)
-{
-    pwm_confUH(compare);
-    pwm_set_H_WL();
-}
-
-static inline void bldc_commutation_forward_180(uint16_t compare)
-{
-    pwm_confVH(compare);
-    pwm_set_H_WL();
-}
-
-static inline void bldc_commutation_forward_240(uint16_t compare)
-{
     pwm_confVH(compare);
     pwm_set_H_UL();
 }
 
-static inline void bldc_commutation_forward_300(uint16_t compare)
+static inline void bldc_commutation_forward_120(uint16_t compare)
 {
     pwm_confWH(compare);
     pwm_set_H_UL();
 }
 
+static inline void bldc_commutation_forward_180(uint16_t compare)
+{
+    pwm_confWH(compare);
+    pwm_set_H_VL();
+}
+
+static inline void bldc_commutation_forward_240(uint16_t compare)
+{
+    pwm_confUH(compare);
+    pwm_set_H_VL();
+}
+
+static inline void bldc_commutation_forward_300(uint16_t compare)
+{
+    pwm_confUH(compare);
+    pwm_set_H_WL();
+}
+
 static inline void bldc_commutation_backward_0(uint16_t compare)
 {
-    pwm_confVH(compare);
-    pwm_set_H_WL();
+    pwm_confWH(compare);
+    pwm_set_H_VL();
 }
 
 static inline void bldc_commutation_backward_60(uint16_t compare)
 {
-    pwm_confVH(compare);
-    pwm_set_H_UL();
+    pwm_confUH(compare);
+    pwm_set_H_VL();
 }
 
 static inline void bldc_commutation_backward_120(uint16_t compare)
@@ -361,8 +361,8 @@ static inline void bldc_commutation_backward_120(uint16_t compare)
 
 static inline void bldc_commutation_backward_180(uint16_t compare)
 {
-    pwm_confWH(compare);
-    pwm_set_H_VL();
+    pwm_confVH(compare);
+    pwm_set_H_WL();
 }
 
 static inline void bldc_commutation_backward_240(uint16_t compare)
@@ -373,8 +373,8 @@ static inline void bldc_commutation_backward_240(uint16_t compare)
 
 static inline void bldc_commutation_backward_300(uint16_t compare)
 {
-    pwm_confUH(compare);
-    pwm_set_H_WL();
+    pwm_confWH(compare);
+    pwm_set_H_UL();
 }
 
 #endif
@@ -383,28 +383,32 @@ typedef void (*bldc_commutation_t)(uint16_t);
 
 static void bldc_commutation_forward(bldc_position_t position, uint16_t compare)
 {
-    static bldc_commutation_t forward_commutations[] = {[BLDC_POSITION_0] = &bldc_commutation_forward_0,
-                                                        [BLDC_POSITION_60] = &bldc_commutation_forward_60,
-                                                        [BLDC_POSITION_120] = &bldc_commutation_forward_120,
-                                                        [BLDC_POSITION_180] = &bldc_commutation_forward_180,
-                                                        [BLDC_POSITION_240] = &bldc_commutation_forward_240,
-                                                        [BLDC_POSITION_300] = &bldc_commutation_forward_300};
+    static bldc_commutation_t forward_commutations[] = {
+        [BLDC_POSITION_0] = &bldc_commutation_forward_0,
+        [BLDC_POSITION_60] = &bldc_commutation_forward_60,
+        [BLDC_POSITION_120] = &bldc_commutation_forward_120,
+        [BLDC_POSITION_180] = &bldc_commutation_forward_180,
+        [BLDC_POSITION_240] = &bldc_commutation_forward_240,
+        [BLDC_POSITION_300] = &bldc_commutation_forward_300,
+    };
 
-    if (position != 0b000 && position != 0b111) {
+    if (position > 0b000 && position < 0b111) {
         forward_commutations[position](compare);
     }
 }
 
 static void bldc_commutation_backward(bldc_position_t position, uint16_t compare)
 {
-    static bldc_commutation_t backward_commutations[] = {[BLDC_POSITION_0] = &bldc_commutation_backward_0,
-                                                         [BLDC_POSITION_60] = &bldc_commutation_backward_60,
-                                                         [BLDC_POSITION_120] = &bldc_commutation_backward_120,
-                                                         [BLDC_POSITION_180] = &bldc_commutation_backward_180,
-                                                         [BLDC_POSITION_240] = &bldc_commutation_backward_240,
-                                                         [BLDC_POSITION_300] = &bldc_commutation_backward_300};
+    static bldc_commutation_t backward_commutations[] = {
+        [BLDC_POSITION_0] = &bldc_commutation_backward_0,
+        [BLDC_POSITION_60] = &bldc_commutation_backward_60,
+        [BLDC_POSITION_120] = &bldc_commutation_backward_120,
+        [BLDC_POSITION_180] = &bldc_commutation_backward_180,
+        [BLDC_POSITION_240] = &bldc_commutation_backward_240,
+        [BLDC_POSITION_300] = &bldc_commutation_backward_300,
+    };
 
-    if (position != 0b000 && position != 0b111) {
+    if (position > 0b000 && position < 0b111) {
         backward_commutations[position](compare);
     }
 }
@@ -413,15 +417,10 @@ static void bldc_commutation(bldc_direction_t direction, uint16_t compare)
 {
     static uint8_t prev_position = 0xFFU;
 
-    // faza U -> hall 3
-    uint8_t hall_u = hall_read_H3();
-    // faza V -> hall 1
-    uint8_t hall_v = hall_read_H1();
-    // faza W -> hall 2
-    uint8_t hall_w = hall_read_H2();
-
-    // bitwise OR aby zebrac do 3 bitowej unsigned wartosci
-    uint8_t position = (hall_u << 2U) | (hall_v << 1U) | hall_w;
+    uint8_t hall_1 = hall_read_H1() & 0x01U;
+    uint8_t hall_2 = hall_read_H2() & 0x01U;
+    uint8_t hall_3 = hall_read_H3() & 0x01U;
+    uint8_t position = (hall_3 << 2U) | (hall_2 << 1U) | hall_1;
 
     if (position != prev_position) {
         pwm_set_L_all();
