@@ -1,20 +1,16 @@
-add_executable(app)
+add_library(bldc STATIC)
 
-target_sources(app PRIVATE 
-    "main.c"
+target_sources(bldc PRIVATE 
+    "bldc.c"
 )
 
-target_include_directories(app PRIVATE 
-    ${CMAKE_DIR}/stm32cubemx
-    ${APP_DIR}/bldc
+target_include_directories(bldc PRIVATE 
 )
 
-target_link_libraries(app PRIVATE
-    stm32cubemx
-    bldc
+target_link_libraries(bldc PRIVATE
 )
 
-target_compile_options(app PUBLIC
+target_compile_options(bldc PUBLIC
     -std=c23
     -Wall
     -Wextra
