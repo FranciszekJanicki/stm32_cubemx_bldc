@@ -33,4 +33,14 @@ target_compile_options(app PUBLIC
     -Wdouble-promotion
     -Wimplicit-fallthrough
     -Wcast-align
+    -Wformat=2
+    -Wformat-security
+    -Wmissing-prototypes
+    -Wmissing-declarations
+    -Wstrict-prototypes
+    -Wold-style-definition
+    -Wundef
+    -Wvla
+    -Wpointer-arith
+    -Wstrict-aliasing=2
 )
