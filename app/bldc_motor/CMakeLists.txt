@@ -1,16 +1,16 @@
-add_library(bldc STATIC)
+add_library(bldc_motor STATIC)
 
-target_sources(bldc PRIVATE 
-    "bldc.c"
+target_sources(bldc_motor PRIVATE 
+    "bldc_motor.c"
 )
 
-target_include_directories(bldc PRIVATE 
+target_include_directories(bldc_motor PRIVATE 
 )
 
-target_link_libraries(bldc PRIVATE
+target_link_libraries(bldc_motor PRIVATE
 )
 
-target_compile_options(bldc PUBLIC
+target_compile_options(bldc_motor PUBLIC
     -std=c23
     -Wall
     -Wextra

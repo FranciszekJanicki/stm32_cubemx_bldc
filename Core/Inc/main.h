@@ -57,30 +57,30 @@ void SystemClock_Config(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define BLDC_UL_Pin GPIO_PIN_0
-#define BLDC_UL_GPIO_Port GPIOA
-#define BLDC_UH_Pin GPIO_PIN_1
-#define BLDC_UH_GPIO_Port GPIOA
-#define BLDC_VL_Pin GPIO_PIN_2
-#define BLDC_VL_GPIO_Port GPIOA
-#define BLDC_VH_Pin GPIO_PIN_3
-#define BLDC_VH_GPIO_Port GPIOA
-#define BLDC_WL_Pin GPIO_PIN_4
-#define BLDC_WL_GPIO_Port GPIOA
-#define BLDC_WH_Pin GPIO_PIN_5
-#define BLDC_WH_GPIO_Port GPIOA
-#define BLDC_PWM_U_Pin GPIO_PIN_6
-#define BLDC_PWM_U_GPIO_Port GPIOC
-#define BLDC_PWM_V_Pin GPIO_PIN_7
-#define BLDC_PWM_V_GPIO_Port GPIOC
-#define BLDC_PWM_W_Pin GPIO_PIN_8
-#define BLDC_PWM_W_GPIO_Port GPIOC
-#define BLDC_HALL_0_Pin GPIO_PIN_6
-#define BLDC_HALL_0_GPIO_Port GPIOB
-#define BLDC_HALL_1_Pin GPIO_PIN_7
-#define BLDC_HALL_1_GPIO_Port GPIOB
-#define BLDC_HALL_2_Pin GPIO_PIN_8
-#define BLDC_HALL_2_GPIO_Port GPIOB
+#define BLDC_MOTOR_UL_Pin GPIO_PIN_0
+#define BLDC_MOTOR_UL_GPIO_Port GPIOA
+#define BLDC_MOTOR_UH_Pin GPIO_PIN_1
+#define BLDC_MOTOR_UH_GPIO_Port GPIOA
+#define BLDC_MOTOR_VL_Pin GPIO_PIN_2
+#define BLDC_MOTOR_VL_GPIO_Port GPIOA
+#define BLDC_MOTOR_VH_Pin GPIO_PIN_3
+#define BLDC_MOTOR_VH_GPIO_Port GPIOA
+#define BLDC_MOTOR_WL_Pin GPIO_PIN_4
+#define BLDC_MOTOR_WL_GPIO_Port GPIOA
+#define BLDC_MOTOR_WH_Pin GPIO_PIN_5
+#define BLDC_MOTOR_WH_GPIO_Port GPIOA
+#define BLDC_MOTOR_PWM_U_Pin GPIO_PIN_6
+#define BLDC_MOTOR_PWM_U_GPIO_Port GPIOC
+#define BLDC_MOTOR_PWM_V_Pin GPIO_PIN_7
+#define BLDC_MOTOR_PWM_V_GPIO_Port GPIOC
+#define BLDC_MOTOR_PWM_W_Pin GPIO_PIN_8
+#define BLDC_MOTOR_PWM_W_GPIO_Port GPIOC
+#define BLDC_MOTOR_HALL_0_Pin GPIO_PIN_6
+#define BLDC_MOTOR_HALL_0_GPIO_Port GPIOB
+#define BLDC_MOTOR_HALL_1_Pin GPIO_PIN_7
+#define BLDC_MOTOR_HALL_1_GPIO_Port GPIOB
+#define BLDC_MOTOR_HALL_2_Pin GPIO_PIN_8
+#define BLDC_MOTOR_HALL_2_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

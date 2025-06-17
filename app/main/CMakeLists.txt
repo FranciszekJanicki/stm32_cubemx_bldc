@@ -6,12 +6,12 @@ target_sources(app PRIVATE
 
 target_include_directories(app PRIVATE 
     ${CMAKE_DIR}/stm32cubemx
-    ${APP_DIR}/bldc
+    ${APP_DIR}/bldc_motor
 )
 
 target_link_libraries(app PRIVATE
     stm32cubemx
-    bldc
+    bldc_motor
 )
 
 target_compile_options(app PUBLIC
